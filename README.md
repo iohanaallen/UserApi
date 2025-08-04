@@ -41,7 +41,7 @@ cd UserApi
 dotnet restore
 dotnet run
 
-A API vai estar disponível em http://localhost:5000 (ou a porta configurada).
+A API vai estar disponível em http://localhost:5236.
 
 Endpoints disponíveis
 
