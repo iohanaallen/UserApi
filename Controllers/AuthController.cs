@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -14,73 +15,77 @@ namespace UserApi.Controllers
     public class AuthController : ControllerBase
     {
         private readonly AppDbContext _context;
-        private readonly JwtSettings _jwtSettings;
+        private readonly IConfiguration _configuration;
+        private readonly PasswordHasher<User> _passwordHasher;
 
-        public AuthController(AppDbContext context, IOptions<JwtSettings> jwtSettings)
+        public AuthController(AppDbContext context, IConfiguration configuration)
         {
             _context = context;
-            _jwtSettings = jwtSettings.Value;
-        }
-
-        [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest request)
-        {
-            var user = _context.Users.SingleOrDefault(u => u.Username == request.Username && u.Password == request.Password);
-
-            if (user == null)
-                return Unauthorized("Usuário ou senha inválidos");
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_jwtSettings.SecretKey!);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.Name, user.Username),
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
-                }),
-                Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpirationInMinutes),
-                Issuer = _jwtSettings.Issuer,
-                Audience = _jwtSettings.Audience,
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return Ok(new { token = tokenHandler.WriteToken(token) });
+            _configuration = configuration;
+            _passwordHasher = new PasswordHasher<User>();
         }
 
         [HttpPost("register")]
-        public IActionResult Register([FromBody] RegisterRequest request)
+        public async Task<IActionResult> Register(RegisterRequest request)
         {
-            if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
-                return BadRequest("Usuário e senha são obrigatórios");
+            if (await _context.Users.AnyAsync(u => u.Username == request.Username))
+                return BadRequest("Usuário já existe.");
 
-            var existingUser = _context.Users.SingleOrDefault(u => u.Username == request.Username);
-            if (existingUser != null)
-                return Conflict("Este nome de usuário já está em uso");
-
-            var newUser = new User
+            var user = new User
             {
                 Username = request.Username,
-                Password = request.Password
+                Role = request.Role ?? "User"
             };
 
-            _context.Users.Add(newUser);
-            _context.SaveChanges();
+           
+            user.Password = _passwordHasher.HashPassword(user, request.Password);
 
-            return Created("", "Usuário cadastrado com sucesso");
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            return Ok("Usuário registrado com sucesso.");
         }
-    }
 
-    public class LoginRequest
-    {
-        public string Username { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-    }
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginRequest request)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == request.Username);
 
-    public class RegisterRequest
-    {
-        public string Username { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
+            if (user == null)
+                return Unauthorized("Credenciais inválidas.");
+
+            // Verifica se a senha fornecida bate com o hash armazenado
+            var verifyResult = _passwordHasher.VerifyHashedPassword(user, user.Password, request.Password);
+            if (verifyResult == PasswordVerificationResult.Failed)
+                return Unauthorized("Credenciais inválidas.");
+
+            var jwtSettings = _configuration.GetSection("JwtSettings");
+            var secretKey = jwtSettings["SecretKey"];
+            var issuer = jwtSettings["Issuer"];
+            var audience = jwtSettings["Audience"];
+
+            var key = Encoding.UTF8.GetBytes(secretKey);
+
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Role, user.Role)
+            };
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddHours(1),
+                Issuer = issuer,
+                Audience = audience,
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var jwt = tokenHandler.WriteToken(token);
+
+            return Ok(new { token = jwt });
+        }
     }
 }
