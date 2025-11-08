@@ -107,6 +107,9 @@ Cada etapa representa um avanço no meu objetivo de dominar ASP.NET Core e boas 
 
 
 ---
+Este projeto marca o início da minha jornada como desenvolvedora Back-End, onde estou aplicando tudo o que aprendo na graduação e nos estudos diários com .NET.”
+
+---
 
 👩‍💻 Autora
 
