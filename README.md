@@ -56,6 +56,7 @@ Authorization: Bearer {token}
 Controle de acesso baseado em roles (ex: Admin, User).
 
 Como executar localmente
+
 Clonar o repositório
 Bash
 git clone https://github.com/iohanaallen/user-api.git
@@ -78,7 +79,9 @@ https://localhost:{porta}/swagger
 Permite testar todos os endpoints diretamente.
 
 Endpoints principais
+
 Criar usuário
+
 Http
 POST /api/users
 JSON
@@ -87,6 +90,7 @@ JSON
   "password": "M0712",
   "role": "Admin"
 }
+
 Login
 Http
 POST /api/auth/login
@@ -95,43 +99,67 @@ JSON
   "username": "Mariah",
   "password": "M0712"
 }
+
 Resposta:
 JSON
 {
   "token": "jwt_token"
 }
+
 Listar usuários (protegido)
 Http
 GET /api/users
 Authorization: Bearer {token}
 
 Integração com Java
+
 A API foi integrada a um cliente Java, demonstrando:
+
 Consumo de API REST via HTTP
+
 Autenticação com JWT
+
 Comunicação entre aplicações de stacks diferentes
 Banco de dados
+
 Banco: SQLite
+
 ORM: Entity Framework Core
+
 Migrations utilizadas para versionamento do schema
+
 Roadmap
 
 (próximos passos)
+
 Migração para PostgreSQL
+
 Implementação de testes automatizados (xUnit)
+
 Refresh Token
+
 Logging estruturado
+
 Deploy em cloud (Render ou Azure)
+
 Docker
 
 Sobre o projeto
+
 Projeto desenvolvido com foco em evolução para portfólio backend profissional, aplicando conceitos de:
 APIs REST
+
 Segurança com JWT
+
 Arquitetura em camadas
+
 Integração entre sistemas
 
+
 Autora
+
 Iohana Allen
-LinkedIn: https://www.linkedin.com/in/iohana-allen⁠�
-GitHub: https://github.com/iohanaallen⁠�
+
+LinkedIn: https://www.linkedin.com/in/iohana-allen
+
+GitHub: https://github.com/iohanaallen
