@@ -1,6 +1,9 @@
 User API - ASP.NET Core
+
 API RESTful desenvolvida em ASP.NET Core para gerenciamento de usuários, com autenticação baseada em JWT, persistência em SQLite e documentação interativa via Swagger.
+
 O projeto demonstra a construção de uma API backend estruturada, com separação de responsabilidades e integração com cliente externo em Java.
+
 Stack
 .NET 8
 ASP.NET Core Web API
@@ -9,6 +12,7 @@ SQLite
 JWT (JSON Web Token)
 Swagger / OpenAPI
 C#
+
 Arquitetura
 A aplicação segue uma organização em camadas:
 Controllers: exposição dos endpoints HTTP
@@ -17,7 +21,8 @@ Repositories: acesso a dados
 Models/DTOs: definição de entidades e contratos
 Data: contexto do banco (EF Core)
 Essa estrutura facilita manutenção, testes e evolução do projeto.
-Funcionalidades
+
+Funcionalidades:
 Cadastro de usuários
 Autenticação com geração de token JWT
 Autorização baseada em roles
@@ -26,6 +31,7 @@ Integração com aplicação cliente em Java
 Documentação automática com Swagger
 Autenticação e Autorização
 A API utiliza JWT para proteger rotas.
+
 Fluxo:
 O usuário realiza login
 A API retorna um token JWT
@@ -33,6 +39,7 @@ O token deve ser enviado no header das requisições protegidas
 Http
 Authorization: Bearer {token}
 Controle de acesso baseado em roles (ex: Admin, User).
+
 Como executar localmente
 Clonar o repositório
 Bash
@@ -49,6 +56,7 @@ Após iniciar a aplicação:
 
 https://localhost:{porta}/swagger
 Permite testar todos os endpoints diretamente.
+
 Endpoints principais
 Criar usuário
 Http
@@ -76,6 +84,7 @@ Listar usuários (protegido)
 Http
 GET /api/users
 Authorization: Bearer {token}
+
 Integração com Java
 A API foi integrada a um cliente Java, demonstrando:
 Consumo de API REST via HTTP
@@ -85,19 +94,23 @@ Banco de dados
 Banco: SQLite
 ORM: Entity Framework Core
 Migrations utilizadas para versionamento do schema
-Roadmap (próximos passos)
+Roadmap
+
+(próximos passos)
 Migração para PostgreSQL
 Implementação de testes automatizados (xUnit)
 Refresh Token
 Logging estruturado
 Deploy em cloud (Render ou Azure)
 Docker
+
 Sobre o projeto
 Projeto desenvolvido com foco em evolução para portfólio backend profissional, aplicando conceitos de:
 APIs REST
 Segurança com JWT
 Arquitetura em camadas
 Integração entre sistemas
+
 Autora
 Iohana Allen
 LinkedIn: https://www.linkedin.com/in/iohana-allen⁠�
