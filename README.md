@@ -1,165 +1,206 @@
 User API - ASP.NET Core
 
-API RESTful desenvolvida em ASP.NET Core para gerenciamento de usuários, com autenticação baseada em JWT, persistência em SQLite e documentação interativa via Swagger.
+API RESTful para gerenciamento de usuários.
 
-O projeto demonstra a construção de uma API backend estruturada, com separação de responsabilidades e integração com cliente externo em Java.
+Autenticação via JWT.
 
-Stack | .NET 8 | 
-ASP.NET Core Web API | 
-Entity Framework Core | 
-SQLite | 
-JWT (JSON Web Token) | 
-Swagger / OpenAPI | 
+Persistência com Entity Framework Core + SQLite.
+
+Documentação com Swagger.
+
+Projeto orientado a backend real, segurança e organização em camadas.
+
+.
+
+Stack
+
+.NET 8
+ASP.NET Core Web API
+Entity Framework Core
+SQLite
+JWT
+Swagger
 C#
 
+.
+
+Status
+
+Em evolução
+Pronto para uso local
+Preparado para deploy
+
+.
+
 Arquitetura
-A aplicação segue uma organização em camadas:
+UserApi/
 
-Controllers: exposição dos endpoints HTTP
+Controllers/
+Services/
+Repositories/
+Models/
+DTOs/
+Data/
+Migrations/
+Program.cs
 
-Services: regras de negócio
+.
 
-Repositories: acesso a dados
+Camadas:
 
-Models/DTOs: definição de entidades e contratos
+Controllers → entrada HTTP
+Services → regra de negócio
+Repositories → acesso a dados
+DTOs → contrato da API
 
-Data: contexto do banco (EF Core)
+.
 
-Essa estrutura facilita manutenção, testes e evolução do projeto.
+Padrões aplicados:
 
-Funcionalidades:
-Cadastro de usuários
+Separation of Concerns
+Dependency Injection
+DTO Pattern
+Repository Pattern
 
-Autenticação com geração de token JWT
+.
 
-Autorização baseada em roles
+Segurança
 
-Endpoints protegidos por autenticação
+JWT (stateless)
 
-Integração com aplicação cliente em Java
+Login → gera token → acesso protegido
 
-Documentação automática com Swagger
-
-Autenticação e Autorização
-
-A API utiliza JWT para proteger rotas.
-
-Fluxo:
-O usuário realiza login
-
-A API retorna um token JWT
-
-O token deve ser enviado no header das requisições protegidas
-
-Http
 Authorization: Bearer {token}
-Controle de acesso baseado em roles (ex: Admin, User).
 
-Como executar localmente
+.
 
-Clonar o repositório
-Bash
-git clone https://github.com/iohanaallen/user-api.git
-cd user-api
+Controle de acesso:
 
-Restaurar dependências
-Bash
+Authorize
+Authorize(Roles = "Admin")
+
+.
+
+Funcionalidades
+
+Cadastro de usuários
+Login com JWT
+Autorização por role
+Rotas protegidas
+Swagger ativo
+Integração com Java
+
+.
+
+Execução
+
+Clone:
+
+git clone https://github.com/iohanaallen/UserApi.git
+cd UserApi
+
+
+Restore:
+
 dotnet restore
 
-Executar a aplicação
-Bash
+
+Database:
+
+dotnet ef database update
+
+
+Run:
+
 dotnet run
-
-Documentação (Swagger)
-
-Após iniciar a aplicação:
-
+Swagger
 https://localhost:{porta}/swagger
+Endpoints
 
-Permite testar todos os endpoints diretamente.
 
-Endpoints principais
+Register
 
-Criar usuário
-
-Http
-POST /api/users
-JSON
+POST /api/auth/register
 {
-  "username": "Mariah",
-  "password": "M0712",
-  "role": "Admin"
+  "username": "usuario",
+  "password": "senha",
+  "role": "User"
 }
+
 
 Login
-Http
+
 POST /api/auth/login
-JSON
 {
-  "username": "Mariah",
-  "password": "M0712"
+  "username": "usuario",
+  "password": "senha"
 }
 
-Resposta:
-JSON
+
+Response
+
 {
   "token": "jwt_token"
 }
 
-Listar usuários (protegido)
-Http
-GET /api/users
+
+Profile
+
+GET /api/auth/profile
 Authorization: Bearer {token}
 
-Integração com Java
 
-A API foi integrada a um cliente Java, demonstrando:
+Admin
 
-Consumo de API REST via HTTP
+GET /api/auth/admin-dashboard
+Authorization: Bearer {token}
+Banco
 
-Autenticação com JWT
 
-Comunicação entre aplicações de stacks diferentes
-Banco de dados
+SQLite
+Entity Framework Core
+Migrations
 
-Banco: SQLite
+.
 
-ORM: Entity Framework Core
+Integração
 
-Migrations utilizadas para versionamento do schema
+API consumida por aplicação Java.
+
+HTTP + JWT
+Comunicação entre stacks
+
+.
 
 Roadmap
 
-(próximos passos)
-
-Migração para PostgreSQL
-
-Implementação de testes automatizados (xUnit)
-
+PostgreSQL
+Testes (xUnit)
 Refresh Token
-
-Logging estruturado
-
-Deploy em cloud (Render ou Azure)
-
+Logging (Serilog)
 Docker
+Deploy (Render / Azure)
 
-Sobre o projeto
 
-Projeto desenvolvido com foco em evolução para portfólio backend profissional, aplicando conceitos de:
-APIs REST
+Deploy (em breve)
 
-Segurança com JWT
+URL pública será adicionada aqui após deploy.
 
-Arquitetura em camadas
+.
 
-Integração entre sistemas
+Diferencial
 
+
+Autenticação completa com JWT
+Controle por roles
+Estrutura pronta para escalar
+Integração real com outra linguagem
+
+.
 
 Autora
 
 Iohana Allen
-
 LinkedIn: https://www.linkedin.com/in/iohana-allen
 
 GitHub: https://github.com/iohanaallen
